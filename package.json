@@ -1,0 +1,30 @@
+{
+  "name": "markem-up",
+  "version": "1.0.0",
+  "description": "Markers based html to pdf converter",
+  "main": "meu.js",
+  "scripts": {
+    "test": "test",
+    "start": "node meu.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cvmcosta/Mark-em-Up.git"
+  },
+  "keywords": [
+    "nodejs",
+    "marks",
+    "html",
+    "pdf",
+    "converter"
+  ],
+  "author": "cvmcosta",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Cvmcosta/Mark-em-Up/issues"
+  },
+  "homepage": "https://github.com/Cvmcosta/Mark-em-Up#readme",
+  "devDependencies": {
+    "electron": "^3.0.3"
+  }
+}

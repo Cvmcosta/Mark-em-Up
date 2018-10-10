@@ -1,0 +1,53 @@
+language: cpp
+dist:     trusty
+sudo:     required
+notifications:
+  email:  false
+services:
+  - docker
+
+matrix:
+  include:
+    - os:         linux
+      env:        TARGET=system-qt4-linux
+      addons:
+        apt:
+          packages:
+          - libqtwebkit-dev
+
+    - os:         linux
+      env:        TARGET=system-qt5-linux
+      addons:
+        apt:
+          packages:
+          - libqt5webkit5-dev
+          - libqt5xmlpatterns5-dev
+          - libqt5svg5-dev
+
+    - os:         linux
+      env:        TARGET=custom-qt4-linux
+
+    - os:         osx
+      osx_image:  xcode9.3
+      env:        TARGET=custom-qt4-osx
+
+    - os:         linux
+      env:        TARGET=custom-qt4-windows
+
+install:
+- sed -i -e 's/    SYNCQT_OPTS=/    SYNCQT_OPTS=-quiet/g' qt/configure
+- test -n "$CC"  && unset CC
+- test -n "$CXX" && unset CXX
+- git clone https://github.com/wkhtmltopdf/packaging.git ../packaging
+
+script:
+- >
+    if   [[ $TARGET == "system-qt4-linux"   ]]; then qmake-qt4 CONFIG+=silent && make;
+    elif [[ $TARGET == "system-qt5-linux"   ]]; then /usr/lib/x86_64-linux-gnu/qt5/bin/qmake CONFIG+=silent && make;
+    elif [[ $TARGET == "custom-qt4-linux"   ]]; then ../packaging/build compile-docker stretch-amd64   $PWD ../build;
+    elif [[ $TARGET == "custom-qt4-windows" ]]; then ../packaging/build compile-docker mxe-cross-win64 $PWD ../build;
+    elif [[ $TARGET == "custom-qt4-osx"     ]]; then
+        sudo -H pip install -q conan pyyaml --ignore-installed six && sudo gem install fpm --no-ri --no-rdoc && \
+        sudo xcode-select --switch /Library/Developer/CommandLineTools && \
+        MACOSX_DEPLOYMENT_TARGET=10.7 ../packaging/build vagrant macos-cocoa --clean --version - - $PWD;
+    fi
